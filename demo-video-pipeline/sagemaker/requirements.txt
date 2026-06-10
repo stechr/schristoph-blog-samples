@@ -1,0 +1,7 @@
+# Inference container deps (installed into the HF PyTorch DLC at endpoint build).
+# flash-attn is RECOMMENDED but OPTIONAL — listed separately and installed best-effort
+# by the DLC; inference.py falls back to default attention if it is missing.
+qwen-tts
+soundfile
+huggingface_hub>=0.23
+# flash-attn  # best-effort; uncomment only if the DLC toolchain can build it (CUDA + nvcc)
