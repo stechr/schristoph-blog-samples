@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sample Task Board</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!--
+    A neutral, no-branding sample single-page app for the demo-video pipeline.
+    Fictional data only. The recorder (pipeline/record.py) drives the elements
+    identified by their data-testid attributes; keep those stable if you edit.
+  -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">▦</span>
+      <span>Sample Task Board</span>
+    </div>
+    <nav class="nav" aria-label="primary">
+      <button class="nav-item is-active" data-testid="nav-board">Board</button>
+      <button class="nav-item" data-testid="nav-reports">Reports</button>
+      <button class="nav-item" data-testid="nav-settings">Settings</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="stats" aria-label="summary">
+      <div class="stat-card" data-testid="stat-total">
+        <div class="stat-value" id="stat-total-value">0</div>
+        <div class="stat-label">Total tasks</div>
+      </div>
+      <div class="stat-card" data-testid="stat-open">
+        <div class="stat-value" id="stat-open-value">0</div>
+        <div class="stat-label">Open</div>
+      </div>
+      <div class="stat-card" data-testid="stat-done">
+        <div class="stat-value" id="stat-done-value">0</div>
+        <div class="stat-label">Done</div>
+      </div>
+      <div class="stat-card" data-testid="stat-rate">
+        <div class="stat-value" id="stat-rate-value">0%</div>
+        <div class="stat-label">Completion</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h1>Today</h1>
+        <div class="filters" role="group" aria-label="filter tasks">
+          <button class="filter is-active" data-testid="filter-all" data-filter="all">All</button>
+          <button class="filter" data-testid="filter-open" data-filter="open">Open</button>
+          <button class="filter" data-testid="filter-done" data-filter="done">Done</button>
+        </div>
+      </div>
+
+      <form class="add-row" data-testid="add-form" autocomplete="off">
+        <input id="new-task" data-testid="new-task-input" type="text"
+               placeholder="Add a task and press Enter…" aria-label="new task" />
+        <button type="submit" data-testid="add-button">Add</button>
+      </form>
+
+      <ul class="task-list" id="task-list" data-testid="task-list"></ul>
+    </section>
+
+    <aside class="activity" aria-label="activity">
+      <h2>Activity</h2>
+      <ul class="activity-list" id="activity-list" data-testid="activity-list"></ul>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

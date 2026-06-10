@@ -1,0 +1,126 @@
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --panel-2: #273449;
+  --line: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-2: #34d399;
+  --danger: #f87171;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 600; }
+.brand .logo { color: var(--accent); font-size: 24px; }
+
+.nav { display: flex; gap: 8px; }
+.nav-item, .filter {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.nav-item.is-active { color: var(--text); background: var(--panel-2); }
+.nav-item:hover, .filter:hover { color: var(--text); }
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  grid-template-areas: "stats stats" "panel activity";
+  gap: 20px;
+  padding: 24px 28px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.stats { grid-area: stats; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+}
+.stat-value { font-size: 34px; font-weight: 700; color: var(--accent); }
+.stat-label { margin-top: 6px; color: var(--muted); font-size: 14px; }
+
+.panel { grid-area: panel; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.panel-head h1 { font-size: 22px; margin: 0; }
+.filters { display: flex; gap: 6px; }
+.filter.is-active { color: var(--text); background: var(--panel-2); border-color: var(--line); }
+
+.add-row { display: flex; gap: 10px; margin-bottom: 18px; }
+#new-task {
+  flex: 1;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 15px;
+}
+#new-task:focus { outline: 2px solid var(--accent); }
+.add-row button {
+  background: var(--accent);
+  color: #06283d;
+  border: none;
+  border-radius: 10px;
+  padding: 0 22px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.task {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: opacity .2s, transform .15s;
+}
+.task .check {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--muted);
+  background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.task.done .check { background: var(--accent-2); border-color: var(--accent-2); }
+.task .title { flex: 1; font-size: 16px; }
+.task.done .title { color: var(--muted); text-decoration: line-through; }
+.task .tag { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.task .pri-high { color: var(--danger); border-color: var(--danger); }
+.task.adding { transform: translateY(-6px); opacity: 0; }
+
+.activity { grid-area: activity; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.activity h2 { font-size: 16px; margin: 0 0 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.activity-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.activity-list li { font-size: 14px; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; }
+.activity-list li .when { display: block; font-size: 12px; color: #64748b; margin-top: 2px; }

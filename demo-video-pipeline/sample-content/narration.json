@@ -1,0 +1,58 @@
+{
+  "title": "Sample Task Board — product walkthrough",
+  "app": {
+    "entry": "sample-app/index.html",
+    "width": 1280,
+    "height": 720,
+    "fps": 25
+  },
+  "lead_in_seconds": 3.0,
+  "tail_seconds": 1.0,
+  "segments": [
+    {
+      "id": "seg1",
+      "text": "This is Sample Task Board, a lightweight place for a small team to see everything in flight at a glance. No setup, no clutter. The top row gives you the numbers that matter, and the board below shows the work for today.",
+      "steps": [{ "action": "wait" }]
+    },
+    {
+      "id": "seg2",
+      "text": "Up here are four live counters: total tasks, how many are still open, how many are done, and an overall completion rate. These update instantly as the board changes, so the picture is always current.",
+      "steps": [{ "action": "wait" }]
+    },
+    {
+      "id": "seg3",
+      "text": "Let's add something to the board. I'll type a new task and the moment I confirm it, it lands at the top, tagged high priority and ready to go.",
+      "steps": [{ "action": "type", "testid": "new-task-input", "text": "Prepare release notes", "submit": true }]
+    },
+    {
+      "id": "seg4",
+      "text": "Notice what happened to the counters. Total went up, the open count went up, and the completion rate adjusted automatically. Every change on the board is reflected in the summary without a refresh.",
+      "steps": [{ "action": "wait" }]
+    },
+    {
+      "id": "seg5",
+      "text": "Now let's close out some work. I'll mark a couple of tasks complete. Each one moves to the done state, the activity feed records it, and the completion rate climbs.",
+      "steps": [
+        { "action": "eval", "call": "toggle", "args": [1] },
+        { "action": "pause", "seconds": 1.2 },
+        { "action": "eval", "call": "toggle", "args": [4] }
+      ]
+    },
+    {
+      "id": "seg6",
+      "text": "When the board gets busy, the filters keep you focused. Open shows only what's left to do, Done shows what's finished, and All brings everything back. It's a fast way to switch between planning and review.",
+      "steps": [
+        { "action": "click", "testid": "filter-open" },
+        { "action": "pause", "seconds": 1.5 },
+        { "action": "click", "testid": "filter-done" },
+        { "action": "pause", "seconds": 1.5 },
+        { "action": "click", "testid": "filter-all" }
+      ]
+    },
+    {
+      "id": "seg7",
+      "text": "That's the whole idea: a single board that stays honest about where the work stands, with live numbers and an activity trail you can trust. Simple enough to open on a Monday and actually use all week.",
+      "steps": [{ "action": "wait" }]
+    }
+  ]
+}
