@@ -1,0 +1,3 @@
+# Client / pipeline deps (run locally). ffmpeg must also be on PATH (brew install ffmpeg).
+boto3>=1.34          # Amazon Polly + Amazon SageMaker runtime + (optional) Amazon Bedrock for the generator
+playwright>=1.44     # records the sample app (run: python -m playwright install chromium)

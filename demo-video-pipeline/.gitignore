@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Secrets / state (never commit real values or account-specific deploy state)
+.env
+*.pem
+*.key
+deploy_state.json
+
+# Generated media (videos/audio are large — host them elsewhere, e.g. a CDN)
+media/
+*.mp4
+*.webm
+*.wav
+*.mp3
+*.flac
+
+# Model weights & archives
+*.tar.gz
+*.safetensors
+*.bin
+
+# OS
+.DS_Store
+
+# A user-supplied voice-clone reference (never commit a real voice clip)
+recording/
+ref_audio.*
+ref_text.txt
