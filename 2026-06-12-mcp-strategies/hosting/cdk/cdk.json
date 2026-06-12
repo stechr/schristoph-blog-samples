@@ -1,0 +1,6 @@
+{
+  "app": "uv run --with aws-cdk-lib --with constructs python3 app.py",
+  "context": {
+    "@aws-cdk/core:bootstrapQualifier": "hnb659fds"
+  }
+}

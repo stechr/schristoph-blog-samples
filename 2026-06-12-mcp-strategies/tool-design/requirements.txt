@@ -1,0 +1,4 @@
+# Pin major versions; these are the SDKs the AWS guidance uses in its examples.
+tiktoken>=0.7        # token measurement (proxy tokenizer)
+strands-agents>=0.1  # optional: @tool decorator for the GitHub tools
+mcp>=1.0             # official Model Context Protocol SDK (types/server)
