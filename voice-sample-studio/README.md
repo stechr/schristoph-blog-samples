@@ -20,6 +20,14 @@ text in that take's cloned voice so you can hear how the clone will sound.
 > range. This tool tells good takes from bad — **reference-clip quality is the #1
 > lever for a good clone.**
 
+## Demo
+
+[![Voice Sample Studio walkthrough](https://schristoph.online/media/voice-sample-studio-demo-poster.png)](https://schristoph.online/media/voice-sample-studio-demo.mp4)
+
+A walkthrough of the master-detail app — record, score, the keep/review/reject verdict,
+side-by-side advice, and a live voice preview. **▶ [Watch the demo](https://schristoph.online/media/voice-sample-studio-demo.mp4)**
+(narration is a cloned voice; synthesis is non-deterministic, so output varies).
+
 The **core** (record / score / manage / export) runs **locally on CPU — no cloud
 calls**. Two **optional** features use the cloud and **gracefully degrade** if it is
 unavailable: *rich advice* (Amazon Bedrock Claude) and *voice preview* (the Qwen3-TTS
