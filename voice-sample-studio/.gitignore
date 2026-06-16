@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Recorded audio — the user's own voice; never commit
+recordings/
+*.wav
+*.mp3
+*.flac
+*.m4a
+
+# Take index / exports / generated voice previews
+index.json
+exports/
+previews/
+
+# Demo screencast media (large binaries — keep scripts, not outputs)
+demo/*.mp4
+demo/*.webm
+demo/*.png
+demo/*.wav
+
+# Model caches / weights
+weights/
+models/
+hf-cache/
+*.onnx
+*.pt
+*.ckpt
+*.tar
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

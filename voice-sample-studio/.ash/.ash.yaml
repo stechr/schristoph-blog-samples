@@ -1,0 +1,17 @@
+global_settings:
+  suppressions:
+    - rule_id: 'B404'
+      path: '**/*.py'
+      reason: 'Reviewed: this tool intentionally orchestrates ffmpeg, faster-whisper and Playwright via subprocess. Importing subprocess is required and safe here.'
+    - rule_id: 'B603'
+      path: '**/*.py'
+      reason: 'Reviewed: subprocess calls use fixed executable names and controlled, non-shell argument lists (no untrusted shell strings). No injection surface.'
+    - rule_id: 'B607'
+      path: '**/*.py'
+      reason: 'Reviewed: partial executable paths (ffmpeg, whisper) are intentional so the tool resolves system binaries on the user PATH; this is a local CLI sample.'
+    - rule_id: 'B108'
+      path: '**/*.py'
+      reason: 'Reviewed: hardcoded system-temp paths are deliberate scratch locations in the local demo/screencast helper scripts, not a multi-user temp-race surface.'
+    - rule_id: 'B110'
+      path: '**/*.py'
+      reason: 'Reviewed: try/except/pass guards optional best-effort steps (probe a tool, dismiss a UI banner) where failure is non-fatal and intentionally ignored.'
