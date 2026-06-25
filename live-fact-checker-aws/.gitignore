@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+
+# CDK
+infra/cdk.out/
+cdk.out/
+*.d.ts
+node_modules/
+
+# Local config / credentials (never commit)
+.env
+*.local.json
+samconfig.toml
+frontend/config.js
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

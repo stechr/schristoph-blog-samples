@@ -1,0 +1,5 @@
+aws-cdk-lib>=2.160.0,<3.0.0
+constructs>=10.0.0,<11.0.0
+# boto3>=1.43.36 is required by setup_gateway.py: the managed web-search *connector* target shape
+# (targetConfiguration.mcp.connector) was only added to the SDK in 1.43.36.
+boto3>=1.43.36

@@ -1,0 +1,5 @@
+global_settings:
+  suppressions:
+    - rule_id: 'B310'
+      path: '**/grounding.py'
+      reason: 'Reviewed: urllib.request.urlopen targets a fixed https AgentCore Gateway endpoint from config (not user-controlled), and the request is SigV4-signed. No arbitrary-scheme/SSRF surface.'
