@@ -1,0 +1,4 @@
+# Live streaming server (backend/streaming/server.py). Run with:
+#   uv run --with amazon-transcribe --with websockets python streaming/server.py
+amazon-transcribe>=0.6.2
+websockets>=12.0

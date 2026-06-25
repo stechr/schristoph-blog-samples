@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Fact Checker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="header-bar">
+      <div class="header-title">
+        <h1>Live Fact Checker</h1>
+        <p class="sub">Paste a claim or some text. Claims are highlighted inline and verified against
+          AgentCore Web Search + Claude on Amazon Bedrock — click any highlight or tile for details.</p>
+      </div>
+      <div class="header-auth" id="authArea">
+        <div class="auth" id="loginRow">
+          <input id="email" type="email" placeholder="email" autocomplete="username" />
+          <input id="password" type="password" placeholder="password" autocomplete="current-password" />
+          <button id="login">Sign in</button>
+        </div>
+        <div class="auth hidden" id="sessionRow">
+          <span id="who" class="who"></span>
+          <button id="logout" class="secondary">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="row mode">
+        <label><input type="radio" name="mode" value="verify" /> Verify a single claim</label>
+        <label><input type="radio" name="mode" value="extract" checked /> Extract claims from text</label>
+      </div>
+
+      <textarea id="input" rows="7"
+        placeholder="e.g. Inflation last year was over 200%. — or paste a paragraph and use Extract."></textarea>
+
+      <div class="row context">
+        <input id="speaker" type="text" placeholder="Speaker / source (optional)" />
+        <input id="event" type="text" placeholder="Event / topic (optional)" />
+      </div>
+
+      <div class="row actions hidden" id="cardActions">
+        <button id="record" class="secondary">● Record</button>
+        <span class="spacer"></span>
+        <button id="check">Check</button>
+        <button id="export" class="secondary" disabled>Export</button>
+      </div>
+      <p id="status" class="status"></p>
+    </section>
+
+    <section id="statsBar" class="stats hidden">
+      <span><b id="statClaims">0</b> claims</span>
+      <span class="dot-true"><b id="statTrue">0</b> true</span>
+      <span class="dot-false"><b id="statFalse">0</b> false</span>
+      <span class="dot-uncertain"><b id="statUncertain">0</b> uncertain</span>
+    </section>
+
+    <section id="transcriptPanel" class="card hidden">
+      <h3>Transcript <span class="hint">— click a highlighted claim for details</span></h3>
+      <div id="transcript"></div>
+      <span id="partial" class="partial"></span>
+      <div id="chips"></div>
+    </section>
+
+    <section id="tilesPanel" class="card hidden">
+      <h3>Claims <span class="hint">— each claim, its verdict and sources; click a tile for details</span></h3>
+      <div id="tiles"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>PoC — verdicts are model-generated; always confirm against the cited sources.</p>
+  </footer>
+
+  <!-- Detail overlay -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-box">
+      <button id="modalClose" class="modal-close" aria-label="Close">×</button>
+      <div id="modalVerdict" class="modal-verdict"></div>
+      <blockquote id="modalClaim"></blockquote>
+      <p id="modalExplanation" class="explanation"></p>
+      <div id="modalConfidence" class="conf"></div>
+      <div id="modalSources" class="sources"></div>
+    </div>
+  </div>
+
+  <!-- config.js (gitignored) sets window.CONFIG; loaded BEFORE app.js. -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
