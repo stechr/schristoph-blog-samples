@@ -1,0 +1,17 @@
+{
+  "publisher": "The Meridian",
+  "licenseUrl": "http://127.0.0.1:8402/license.xml",
+  "reportUrl": "http://127.0.0.1:8402/usage-report",
+  "citationRequired": true,
+  "retrieval": {
+    "type": "HTML",
+    "endpoint": "http://127.0.0.1:8402/articles/meridian-fx-outlook"
+  },
+  "packages": [
+    { "function": "ai-train", "subFunction": "training",      "pricingBasis": "per-token-batch", "amount": "0.250", "currency": "USDC" },
+    { "function": "ai-input", "subFunction": "rag",            "pricingBasis": "per-use",         "amount": "0.010", "currency": "USDC" },
+    { "function": "ai-input", "subFunction": "grounding",      "pricingBasis": "per-use",         "amount": "0.010", "currency": "USDC" },
+    { "function": "ai-index", "subFunction": "agent-actions",  "pricingBasis": "per-query",       "amount": "0.020", "currency": "USDC" }
+  ],
+  "_note": "CoMP-style offer/usage declaration (sample). CoMP declares payment/clearing out of scope; the 402 carries payment via x402. FICTIONAL publisher and figures."
+}

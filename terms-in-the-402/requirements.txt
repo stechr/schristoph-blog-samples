@@ -1,0 +1,3 @@
+# terms-in-the-402 has NO third-party dependencies.
+# It uses only the Python 3 standard library (http.server, urllib, json, base64).
+# Requires Python 3.10+ (for the `X | None` type hints in server.py).

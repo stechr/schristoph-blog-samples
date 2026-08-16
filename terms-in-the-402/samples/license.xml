@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RSL-style (Really Simple Licensing) license declaration — FICTIONAL publisher, sample.
+     Served live by server.py at /license.xml; this static copy is for readers browsing the repo.
+     RSL can be associated via robots.txt License:, an HTTP Link: rel="license" header, HTML, or RSS. -->
+<rsl xmlns="https://rslstandard.org/rsl">
+  <content url="http://127.0.0.1:8402/articles/meridian-fx-outlook">
+    <license>
+      <permits type="usage">ai-input</permits>
+      <permits type="usage">ai-index</permits>
+      <prohibits type="usage">ai-train</prohibits>
+      <payment type="pay-per-inference">
+        <amount currency="USDC">0.010</amount>
+      </payment>
+      <payment type="pay-per-crawl">
+        <amount currency="USDC">0.020</amount>
+      </payment>
+      <attribution required="true"/>
+    </license>
+  </content>
+</rsl>
