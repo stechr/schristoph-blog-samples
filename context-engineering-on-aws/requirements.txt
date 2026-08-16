@@ -1,0 +1,4 @@
+# Context Engineering on AWS — sample dependencies.
+# AgentCore Memory data-plane APIs (create_event / retrieve_memory_records) require a
+# recent botocore; if your installed version lacks the bedrock-agentcore client, upgrade.
+boto3>=1.40.0
