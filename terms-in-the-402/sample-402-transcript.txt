@@ -1,0 +1,132 @@
+# terms-in-the-402 — sample transcript
+# (captured from a real local run; publisher and figures are fictional)
+
+## 1. Agent requests gated content, declaring intended use (CoMP function/sub-function)
+
+$ curl -s -D - \
+    -H "X-Intended-Function: ai-input" -H "X-Intended-Subfunction: rag" \
+    http://127.0.0.1:8402/articles/meridian-fx-outlook
+
+HTTP/1.0 402 Payment Required
+Server: terms-in-the-402/1.0 Python/3.14.5
+Date: Sat, 15 Aug 2026 20:27:50 GMT
+Content-Type: application/json
+Content-Length: 654
+Link: <http://127.0.0.1:8402/license.xml>; rel="license"
+License: http://127.0.0.1:8402/license.xml
+X-Usage-Declaration: http://127.0.0.1:8402/.well-known/usage.json
+Cache-Control: no-store
+
+{
+  "x402Version": 2,
+  "error": "payment required",
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "asset": "USDC",
+      "amount": "0.010",
+      "unit": "per-use",
+      "payTo": "0xPUBLISHER_WALLET_PLACEHOLDER",
+      "resource": "/articles/meridian-fx-outlook",
+      "maxTimeoutSeconds": 120
+    }
+  ],
+  "terms": {
+    "publisher": "The Meridian",
+    "licenseUrl": "http://127.0.0.1:8402/license.xml",
+    "usageUrl": "http://127.0.0.1:8402/.well-known/usage.json",
+    "reportUrl": "http://127.0.0.1:8402/usage-report",
+    "function": "ai-input",
+    "subFunction": "rag",
+    "citationRequired": true
+  }
+}
+
+## 2. Agent reads the license the 402 points at (RSL-style, Link: rel=license)
+
+$ curl -s http://127.0.0.1:8402/license.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<rsl xmlns="https://rslstandard.org/rsl">
+  <content url="http://127.0.0.1:8402/articles/meridian-fx-outlook">
+    <license>
+      <permits type="usage">ai-input</permits>
+      <permits type="usage">ai-index</permits>
+      <prohibits type="usage">ai-train</prohibits>
+      <payment type="pay-per-inference">
+        <amount currency="USDC">0.010</amount>
+      </payment>
+      <payment type="pay-per-crawl">
+        <amount currency="USDC">0.020</amount>
+      </payment>
+      <attribution required="true"/>
+    </license>
+  </content>
+</rsl>
+
+## 3. The CoMP-style usage/offer declaration at the well-known URI
+
+$ curl -s http://127.0.0.1:8402/.well-known/usage.json
+
+{
+  "publisher": "The Meridian",
+  "licenseUrl": "http://127.0.0.1:8402/license.xml",
+  "reportUrl": "http://127.0.0.1:8402/usage-report",
+  "citationRequired": true,
+  "retrieval": {
+    "type": "HTML",
+    "endpoint": "http://127.0.0.1:8402/articles/meridian-fx-outlook"
+  },
+  "packages": [
+    {
+      "function": "ai-train",
+      "subFunction": "training",
+      "pricingBasis": "per-token-batch",
+      "amount": "0.250",
+      "currency": "USDC"
+    },
+    {
+      "function": "ai-input",
+      "subFunction": "rag",
+      "pricingBasis": "per-use",
+      "amount": "0.010",
+      "currency": "USDC"
+    },
+    {
+      "function": "ai-input",
+      "subFunction": "grounding",
+      "pricingBasis": "per-use",
+      "amount": "0.010",
+      "currency": "USDC"
+    },
+    {
+      "function": "ai-index",
+      "subFunction": "agent-actions",
+      "pricingBasis": "per-query",
+      "amount": "0.020",
+      "currency": "USDC"
+    }
+  ],
+  "_note": "CoMP declares payment/clearing out of scope; the 402 carries payment via x402."
+}
+
+## 4. Agent pays (simulated signed authorization) and re-requests -> 200 content
+
+$ curl -s -D - -H "X-Intended-Function: ai-input" -H "X-Intended-Subfunction: rag" \
+    -H "X-Payment: <base64 signed authorization>" \
+    http://127.0.0.1:8402/articles/meridian-fx-outlook
+
+HTTP/1.0 200 OK
+Server: terms-in-the-402/1.0 Python/3.14.5
+Date: Sat, 15 Aug 2026 20:27:50 GMT
+Content-Type: text/markdown
+Content-Length: 226
+Link: <http://127.0.0.1:8402/license.xml>; rel="license"
+X-Licensed-Use: ai-input/rag
+Cache-Control: no-store
+
+# The Meridian — Q3 FX Outlook
+
+Fictional market commentary for demonstration only. The euro held its range against the dollar through the quarter while carry unwound in the yen. Nothing here is real, investable, or advice.
+
