@@ -282,7 +282,7 @@ def build_app(store: TakeStore):
             "Record, score, and manage voice reference clips for the Qwen3-TTS "
             "`voice_clone` path. The clone **inherits the cadence, pace, pitch and "
             "timbre** of your reference — aim for clean, well-paced, expressive (not "
-            "monotone) takes ~12–35 s long. Replace `<name>` in the script with your name."
+            "monotone) takes ~10–20 s long. Replace `<name>` in the script with your name."
         )
         target = gr.Textbox(
             label="Target script (read this aloud — used for WER; <name> is ignored)",

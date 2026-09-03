@@ -65,6 +65,26 @@ degrade — they never crash the app.
 
 Or, with the project installed (`uv pip install -e ".[transcribe,mos]"`): `voice-studio`.
 
+### Score a clip from the command line
+
+The web UI is the comfortable way to record and compare takes, but the scorecard is just a
+function: audio in, numbers out. Grade clips you already have, or gate a pipeline before it
+spends anything on a GPU:
+
+```bash
+uv run --no-project --with numpy --with soundfile --with pyloudnorm \
+    --with librosa --with faster-whisper python -m voice_studio.score take1.wav take2.wav
+
+# one line per file, no transcription (fast)
+... python -m voice_studio.score --quiet --no-transcript *.wav
+
+# full scorecard as JSON
+... python -m voice_studio.score --json take1.wav
+```
+
+Exit code is the worst verdict across all files, so it works as a gate: `0` keep, `1` review,
+`2` reject, `3` error.
+
 ### Headless self-test (no mic needed)
 
 ```bash
@@ -157,8 +177,8 @@ All metrics are computed locally. Two families:
 | **Noise floor** | 10th-pct frame level (dBFS) | < −50 dBFS | 0.14 |
 | **Clipping** | fraction of near-full-scale samples | > 0.05% → **reject** | 0.13 |
 | **True peak** | 4× oversampled peak (dBTP) | ≤ −1.0 dBTP | 0.07 |
-| **Loudness** | integrated LUFS (pyloudnorm / ffmpeg `loudnorm`) | −30…−12 LUFS (norm target −16) | 0.11 |
-| **Duration** | seconds | 12–35 s ideal; <8 or >45 → **reject** | 0.09 |
+| **Loudness** | integrated LUFS (pyloudnorm / ffmpeg `loudnorm`) | −30…−12 LUFS (norm target −16); below −33 → **reject** | 0.11 |
+| **Duration** | seconds | 10–20 s ideal; <8 or >45 → **reject** | 0.09 |
 | **Sample rate** | input SR | ≥ 24 kHz (Qwen reference rate) | 0.06 |
 | **Silence ratio** | voiced-frame fraction + lead/tail trim hints | < 45% silence | 0.06 |
 | **Bandwidth** | occupied BW at −40 dB of avg voiced spectrum | ≥ 9 kHz great, < 5 kHz muffled | 0.10 |
@@ -339,7 +359,7 @@ The self-test always runs the acoustic + pitch + **basic-advice** + **preview-wi
 (else they skip gracefully). Set `VOICE_STUDIO_PREVIEW_SMOKE=1` (with boto3 + creds +
 a warm endpoint) to also do **one real preview synth** end-to-end.
 
-(The clean clip is quiet at ~−32 LUFS — fine, the pipeline normalizes to −16; PESQ-based
+(The clean clip is quiet at ~−32 LUFS — just above the −33 reject line, so it still scores; PESQ-based
 MOS is conservative on quiet input, but the *ordering* clean ≥ degraded holds. It still
 verdicts `keep` and shows healthy delivery: 136 WPM "good pace", 3.41 st "expressive".)
 _See the initiative note for the full options report and the v2 design._
