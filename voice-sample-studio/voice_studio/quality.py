@@ -42,10 +42,10 @@ SNR_MIN_DB = 20.0             # below this is a reject for a reference clip
 NOISE_FLOOR_MAX_DBFS = -50.0  # noise floor should sit below this
 MIN_DURATION_S = 8.0          # too short => not enough range
 MAX_DURATION_S = 45.0         # too long => unwieldy / drifts
-# Reference-conditioned cloning is in-context learning over a 12.5 Hz audio codec, so ~15s of
+# Reference-conditioned cloning is in-context learning over a 12 Hz audio codec, so ~15s of
 # reference is a few hundred audio tokens of conditioning context. This band is PROVISIONAL and
 # pipeline-specific -- derived from a handful of takes, NOT vendor guidance (the Qwen3-TTS model
-# card advertises cloning from as little as 3s and states no upper bound). Measured 2026-09-02 on
+# card advertises cloning from as little as 3s and does not specify an upper bound). Measured 2026-09-02 on
 # one speaker: a 27s reference produced a faster, less faithful clone than a 12.6s one, though
 # duration was not isolated as the cause. The previous 12-35s band graded both a 27s and a 28.9s
 # degraded reference as "ideal", so it could not steer anyone away from them.
