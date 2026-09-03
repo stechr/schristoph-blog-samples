@@ -190,10 +190,105 @@ When the user says *"clone my voice and re-record the video in my voice"*, walk 
 > makes generation run long and the async call time out. `scripts/transcribe_reference.py`
 > produces the exact transcript for you.
 
-The `voice_clone` path exposes no speed/instruct knob — the clone inherits the reference
-clip's cadence. To pace a cloned narration, apply post-synthesis ffmpeg `atempo`
-time-stretch (pitch-preserved) or inject inter-sentence pauses, then re-measure and let the
-pipeline re-fit each scene.
+> [!important] Reference clip spec — 10–20s, peaking −6 to −12 dBFS
+> Cloning is in-context learning over a 12.5 Hz audio codec, so a 10–20s clip becomes roughly
+> a few hundred audio tokens of conditioning context. **This band is provisional and
+> pipeline-specific, not vendor guidance** — the Qwen3-TTS model card advertises cloning from as
+> little as 3 seconds and states no upper bound. In my own measurements on one speaker a 27s
+> reference produced a faster, less faithful clone than a 12.6s one, though duration was not
+> isolated as the cause.
+>
+> **Level matters as much as length, and too-quiet is the dangerous direction** because it passes
+> every clipping check. A reference peaking near −19 dBFS needs ~18 dB of normalization, which
+> lifts the quantization floor into audible range — the clone then reproduces *and clips* it,
+> producing audible crackle throughout the render. Validate both bounds while the speaker is still
+> at the microphone.
+
+### Pacing a cloned narration
+
+`voice_clone` exposes no speed or `instruct` knob. (`instruct` belongs to the CustomVoice model,
+which cannot clone — cloning runs on Base, so a handler that accepts `instruct` here silently drops
+it.) More importantly, **the reference is not a duration knob**: it influences rate only weakly.
+Fitted across five references in one setup (n = 5 — indicative, not a model-wide law):
+
+```
+output_wpm ≈ 0.58 × reference_wpm + 110      (r = 0.84, attractor ≈ 260 wpm)
+```
+
+So a deliberately slow 78 wpm read still rendered at 151 wpm. **Re-recording a slower reference is
+not an effective fix** — don't send the speaker back to the microphone expecting one.
+
+**Start with arithmetic.** `words ÷ target_minutes` is the pace the script requires. If that already
+exceeds the pace you want, no synthesis setting and no post-processing can rescue it — cut the
+script.
+
+Then, in order:
+
+1. **Add commas to the synthesis text.** Commas are the only punctuation the model turns into real
+   silence. Measured on identical words and reference:
+
+   | text variant | length | pause time | gross rate |
+   |---|---|---|---|
+   | plain | 3.84s | 0.16s | 219 wpm |
+   | **extra commas** | **4.80s (+25%)** | **0.82s** | **175 wpm** |
+   | ellipses `...` | 3.44s | **0.00s** | 244 wpm |
+   | split into short sentences | 3.68s | **0.00s** | 228 wpm |
+
+   Ellipses and extra full stops are ignored entirely. Keep two copies of the narration: a clean one
+   for human review, and a comma-enriched one for synthesis.
+2. **Shorten the script.** Nothing in the audio pipeline competes with saying less.
+3. **ffmpeg `atempo` time-stretch, last resort, capped near 10%.** Pitch-preserved but audible —
+   `atempo=0.75` reads as an unnaturally sedated speaker.
+
+> [!warning] Never inject inter-sentence silence
+> Splitting on `silencedetect` and concatenating with an added `anullsrc` gap is an anti-pattern: it
+> produces FEWER, LONGER, DEADER pauses than the model's own prosody, and reviewers hear it as
+> "audible breaks" or "badly stitched segments". Measured on one identical 56-word passage:
+>
+> | | internal pauses | mean pause |
+> |---|---|---|
+> | 5 per-sentence calls + 0.85s injected gap | 6 | **0.73s** — dead air |
+> | **1 whole-segment call** | 11 | **0.35s** — natural breathing |
+>
+> For the same reason, **synthesize one call per scene, never per sentence.** Per-sentence calls also
+> rush short lines (past 300 wpm) and truncate endings. If a segment risks running long, split it at
+> a pause the model already produces and cross-fade, or shorten the text.
+>
+> Also note ffmpeg's `silenceremove` defaults to `stop_periods=-1`, which squashes *every* internal
+> silence — including the model's own prosody. Preserve internal pauses explicitly.
+
+After any pacing change, re-measure each segment and let the pipeline re-fit each scene.
+
+### Pronunciation: verify every respelling by transcribing it back
+
+Text-to-speech applies English orthographic rules you did not intend, so a respelling that looks
+obviously right is often wrong. For the acronym "WAF":
+
+| spelled | heard back |
+|---|---|
+| **whaff** | **"WAF"** — correct |
+| `waff` | "Woff" — after /w/, "a" is pulled toward /ɒ/ (want, wash, watch) |
+| `WAF` unmodified | "Web" — the model expands the bare acronym |
+| `whaf` / `w-aff` | "WEF" / "WF" |
+
+Leaving an acronym untouched is not safe either. Synthesize each new term in a natural sentence, run
+ASR on the output, and only add the lexicon row once the readback is correct.
+
+### Audio QA before anyone reviews the cut
+
+- **A trailing non-lexical artifact is invisible to transcription** — one scored a *perfect* 1.00
+  text-similarity, because a sound with no words cannot be detected by comparing words. Add an
+  energy-envelope check: mean |amplitude| over each segment's final ~250ms, flagged when a sentence
+  should have decayed but hasn't.
+- **Guard any automated trim with a re-transcription** and revert when similarity drops — a blind
+  trimmer removes real words (in one run it would have damaged half the segments it touched).
+- **Flag rate outliers** above ~1.35× the median wpm; that is where swallowed words cluster.
+- **Census silences >0.5s** in the final mix — only intentional bookends should be long.
+- **Don't use sample-level discontinuity as a stitch metric.** Calibrate first: an accepted cut and a
+  rejected cut measured 503 and 502 jumps respectively, so it separates nothing.
+- **`difflib.SequenceMatcher` is unreliable above 200 characters** — its autojunk heuristic garbaged
+  a correct segment's score to 0.19 purely because it was the longest input. Compare word lists with
+  `autojunk=False`.
 
 ## Re-voice an existing capture (variable-latency apps)
 
