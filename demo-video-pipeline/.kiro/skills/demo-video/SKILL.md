@@ -191,10 +191,10 @@ When the user says *"clone my voice and re-record the video in my voice"*, walk 
 > produces the exact transcript for you.
 
 > [!important] Reference clip spec — 10–20s, peaking −6 to −12 dBFS
-> Cloning is in-context learning over a 12.5 Hz audio codec, so a 10–20s clip becomes roughly
+> Cloning is in-context learning over a 12 Hz audio codec, so a 10–20s clip becomes roughly
 > a few hundred audio tokens of conditioning context. **This band is provisional and
 > pipeline-specific, not vendor guidance** — the Qwen3-TTS model card advertises cloning from as
-> little as 3 seconds and states no upper bound. In my own measurements on one speaker a 27s
+> little as 3 seconds and does not specify an upper bound. In my own measurements on one speaker a 27s
 > reference produced a faster, less faithful clone than a 12.6s one, though duration was not
 > isolated as the cause.
 >
@@ -209,13 +209,14 @@ When the user says *"clone my voice and re-record the video in my voice"*, walk 
 `voice_clone` exposes no speed or `instruct` knob. (`instruct` belongs to the CustomVoice model,
 which cannot clone — cloning runs on Base, so a handler that accepts `instruct` here silently drops
 it.) More importantly, **the reference is not a duration knob**: it influences rate only weakly.
-Fitted across five references in one setup (n = 5 — indicative, not a model-wide law):
+Measured on five references in one setup, every take came out faster than it was read, by 45-79
+wpm, and a deliberately slow 78 wpm read still rendered at 151 wpm.
 
-```
-output_wpm ≈ 0.58 × reference_wpm + 110      (r = 0.84, attractor ≈ 260 wpm)
-```
+(An earlier version of this skill quoted a fitted line for that relationship. The pairs that could
+be re-verified do not reproduce its coefficients, so it was withdrawn -- five points never
+supported that precision. The operational conclusion needs no regression.)
 
-So a deliberately slow 78 wpm read still rendered at 151 wpm. **Re-recording a slower reference is
+**Re-recording a slower reference is
 not an effective fix** — don't send the speaker back to the microphone expecting one.
 
 **Start with arithmetic.** `words ÷ target_minutes` is the pace the script requires. If that already
