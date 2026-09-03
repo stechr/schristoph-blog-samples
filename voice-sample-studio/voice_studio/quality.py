@@ -29,6 +29,12 @@ from .audio_io import AudioData, load_audio
 # ---- Acoustic thresholds (documented in README) ----------------------------
 TARGET_LUFS = -16.0           # post-normalization target the pipeline uses
 LUFS_MIN, LUFS_MAX = -30.0, -12.0   # acceptable integrated loudness band (pre-norm)
+# Below this, reaching TARGET_LUFS needs so much gain (~17 dB+) that normalization lifts the
+# recording's quantization floor into audible range -- the clone then reproduces AND clips it.
+# Measured 2026-09-02: a take at -38.4 LUFS produced 270 audible crackle events in the rendered
+# narration, while a -24.7 LUFS reference of the same voice produced none. This is a HARD reject
+# because it is not a matter of degree: the artifact is baked into every clone built from the clip.
+LUFS_HARD_MIN = -33.0
 TRUE_PEAK_CLIP_DBTP = -1.0    # peaks above this risk inter-sample clipping
 CLIP_SAMPLE_FRACTION_MAX = 0.0005  # >0.05% near-full-scale samples => clipping
 SNR_GOOD_DB = 35.0            # >= this is excellent
@@ -36,7 +42,14 @@ SNR_MIN_DB = 20.0             # below this is a reject for a reference clip
 NOISE_FLOOR_MAX_DBFS = -50.0  # noise floor should sit below this
 MIN_DURATION_S = 8.0          # too short => not enough range
 MAX_DURATION_S = 45.0         # too long => unwieldy / drifts
-IDEAL_DURATION_LO, IDEAL_DURATION_HI = 12.0, 35.0
+# Reference-conditioned cloning is in-context learning over a 12.5 Hz audio codec, so ~15s of
+# reference is a few hundred audio tokens of conditioning context. This band is PROVISIONAL and
+# pipeline-specific -- derived from a handful of takes, NOT vendor guidance (the Qwen3-TTS model
+# card advertises cloning from as little as 3s and states no upper bound). Measured 2026-09-02 on
+# one speaker: a 27s reference produced a faster, less faithful clone than a 12.6s one, though
+# duration was not isolated as the cause. The previous 12-35s band graded both a 27s and a 28.9s
+# degraded reference as "ideal", so it could not steer anyone away from them.
+IDEAL_DURATION_LO, IDEAL_DURATION_HI = 10.0, 20.0
 MIN_SAMPLE_RATE = 24000       # Qwen reference is 24 kHz; below is upsampled junk
 SILENCE_RATIO_MAX = 0.45      # >45% silence => mostly dead air
 LEAD_TAIL_TRIM_DB = -40.0     # threshold for detecting lead/tail silence
@@ -606,6 +619,11 @@ def _verdict(sc: Scorecard) -> str:
     if sc.duration < MIN_DURATION_S or sc.duration > MAX_DURATION_S:
         return "reject"
     if sc.sample_rate < MIN_SAMPLE_RATE:
+        return "reject"
+    # Too quiet to normalize without exposing the quantization floor. A clip this quiet was
+    # previously graded "keep / 4 stars" on the strength of a clean SNR, then produced 270
+    # audible crackle events once normalized -- a clean-but-tiny signal is still unusable.
+    if sc.integrated_lufs is not None and sc.integrated_lufs < LUFS_HARD_MIN:
         return "reject"
     score = sc.overall_score
     if score >= 75.0:
