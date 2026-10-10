@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghost Stars — what Google ratings look like with the deleted reviews put back</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --mute:#6b7280; --line:#e5e7eb;
+          --good:#15803d; --warn:#b45309; --bad:#b91c1c; --accent:#2563eb; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--bg); }
+  header { padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:baseline; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:20px; }
+  header h1 span { font-weight:400; color:var(--mute); font-size:14px; margin-left:6px; }
+  header p { margin:0; color:var(--mute); flex:1 1 400px; }
+  .poc { background:#fef3c7; color:#78350f; border:1px solid #fcd34d; border-radius:6px; padding:6px 20px; font-size:13px; }
+  form { display:flex; flex-wrap:wrap; gap:10px; align-items:end; padding:12px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  label { display:flex; flex-direction:column; gap:3px; font-size:12px; color:var(--mute); }
+  input, select, button { font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--ink); }
+  input[name=q] { width:260px; }
+  button { background:var(--accent); color:#fff; border-color:var(--accent); cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  #status { padding:6px 20px; color:var(--mute); min-height:28px; }
+  main { display:grid; grid-template-columns: minmax(300px, 30%) 1fr; gap:14px; padding:0 20px 14px; }
+  #map { height: calc(100vh - 250px); min-height:420px; border-radius:8px; border:1px solid var(--line); }
+  .tablewrap { overflow:auto; max-height: calc(100vh - 250px); background:var(--card); border:1px solid var(--line); border-radius:8px; }
+  table { border-collapse:collapse; width:100%; }
+  th, td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+  th { position:sticky; top:0; background:#f1f3f6; font-size:12px; cursor:pointer; user-select:none; z-index:1; }
+  thead tr:nth-child(2) th { top:29px; }
+  th.grp { cursor:default; text-align:center; }
+  td.name, th.name { text-align:left; white-space:normal; min-width:170px; }
+  tr:hover td { background:#f8fafc; }
+  .muted { color:var(--mute); }
+  .small { font-size:11px; color:var(--mute); }
+  .partial { color:var(--mute); font-style:italic; }
+  .delta-bad { color:var(--bad); font-weight:600; }
+  .delta-warn { color:var(--warn); font-weight:600; }
+  .delta-ok { color:var(--good); }
+  .pill { display:inline-block; padding:0 6px; border-radius:9px; font-size:11px; background:#fde68a; color:#78350f; cursor:help; }
+  .tag { display:inline-block; padding:0 5px; border-radius:4px; font-size:10px; background:#e0e7ff; color:#3730a3; }
+  .err { color:var(--bad); font-size:12px; }
+  th[data-k] { cursor:pointer; }
+  th[data-k]:hover { background:#e5e9f0; }
+  th .arrow { color:var(--accent); font-size:10px; margin-left:3px; }
+  td.trend { text-align:left; }
+  td.trend svg { vertical-align:middle; }
+  .tr-up { color:var(--good); font-weight:600; } .tr-down { color:var(--bad); font-weight:600; } .tr-flat { color:var(--mute); }
+  .help { display:grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap:14px; padding:0 20px 24px; }
+  .help section { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .help h2 { font-size:15px; margin:0 0 6px; }
+  .help p, .help li { margin:4px 0; color:#374151; }
+  .help code { background:#eef; padding:0 3px; border-radius:3px; }
+  .legend span { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } #map { height: 360px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Ghost Stars <span>the ratings Google's deleted reviews leave behind</span></h1>
+  <p>Compare Google Maps ratings side by side: the rating Google shows, the rating with reviews removed after defamation complaints put back in, and the rating of the most recent months.</p>
+</header>
+<div class="poc"><b>Proof of concept.</b> Runs on your machine, reads the public Google Maps page with a local browser, and needs no API key. Results are estimates; see the explanations below the table.</div>
+
+<form id="f">
+  <label>City / area (Germany)
+    <input name="q" value="Altstadt, Düsseldorf" required>
+  </label>
+  <label>Category
+    <select name="cat">
+      <option value="Restaurant">Restaurant</option><option value="Brauerei">Brewery</option>
+      <option value="Café">Café</option><option value="Bar">Bar</option><option value="Hotel">Hotel</option>
+      <option value="Bäckerei">Bakery</option><option value="Friseur">Hairdresser</option>
+      <option value="Zahnarzt">Dentist</option><option value="Autowerkstatt">Car repair</option>
+      <option value="Fitnessstudio">Gym</option>
+    </select>
+  </label>
+  <label>Places
+    <select name="limit"><option>10</option><option selected>15</option><option>25</option><option>40</option></select>
+  </label>
+  <label>Count a removed review as
+    <select name="assumed">
+      <option value="1" selected>1 ★ (minimum-star scenario)</option><option value="2">2 ★</option><option value="3">3 ★ (midpoint scenario)</option>
+    </select>
+  </label>
+  <label><span>&nbsp;</span>
+    <span title="Ignore stored results and read every place again from Google Maps"><input type="checkbox" name="fresh" value="1"> refresh (ignore cache)</span>
+  </label>
+  <button id="go" type="submit">Analyse</button>
+</form>
+
+<div id="status">Pick an area and a category, then press “Analyse”. Each place takes 10–30 seconds the first time; cached places appear instantly.</div>
+
+<main>
+  <div id="map"></div>
+  <div class="tablewrap">
+    <table id="t">
+      <thead>
+        <tr>
+          <th class="grp name" rowspan="2" data-k="name">Place</th>
+          <th class="grp" colspan="3">Google</th>
+          <th class="grp" colspan="2" title="Not a corrected rating: what the rating would be if the removed reviews had the star value chosen above">Scenario: removed reviews counted as the chosen ★</th>
+          <th class="grp" colspan="5">Newest visible reviews, last … months</th>
+          <th class="grp" rowspan="2" data-k="trend" title="Descriptive and sample-limited: average stars per month (or per week for busy places) from the loaded reviews, oldest left, newest right. Sort by the change of the review-weighted trend line.">Trend</th>
+        </tr>
+        <tr>
+          <th data-k="raw" title="Average of Google's star histogram">★</th>
+          <th data-k="count" title="Number of ratings Google counts">ratings</th>
+          <th data-k="removed" title="Removals after defamation complaints that Google processed in the last 365 days, from Google's notice. The removed reviews themselves may be older.">removed</th>
+          <th data-k="cal" title="Scenario: lifetime rating if the removed reviews had the chosen star value">lifetime</th>
+          <th data-k="cal12" title="EXPERIMENTAL scenario: visible reviews of the last 12 months plus the removals processed in the last 365 days. The two sets are not the same cohort (removed reviews may be older), and at most 150 visible reviews are loaded.">12 mo. <span class="pill">exp.</span></th>
+          <th data-k="r1">1</th><th data-k="r2">2</th><th data-k="r3">3</th><th data-k="r6">6</th><th data-k="r12">12</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</main>
+
+<div class="help">
+  <section>
+    <h2>What the columns mean</h2>
+    <p><b>★ / ratings</b>: the average and count from Google's star histogram (more precise than the rounded number in the header).</p>
+    <p><b>removed</b>: Google's notice “<i>X to Y reviews removed due to defamation complaints</i>”, shown on business profiles in Germany since April 2026. It counts removals <i>processed</i> in the last 365 days; the removed reviews themselves may be older. The percentage is the share of removed reviews among visible ratings plus removed reviews.</p>
+    <p><b>lifetime</b> (scenario): <code>(★ × ratings + s × removed) / (ratings + removed)</code>, where <code>s</code> is the star value you chose for a removed review. This is what the rating would be <i>if</i> the removed reviews had that value, not a corrected or recovered rating. Google gives a range, so you see both ends.</p>
+    <p><b>12 mo.</b> <span class="pill">exp.</span> EXPERIMENTAL scenario: the removals Google processed in the last 365 days are added to the visible reviews posted in the last 12 months. These are not the same cohort: a removal processed this year can concern an older review. The tool also loads at most 150 visible reviews, so for busy places the 12-month count is extrapolated (marked <b>~</b>). Treat it as a rough indication, not a comparison of like with like.</p>
+    <p><b>1 · 2 · 3 · 6 · 12</b>: the average of the newest visible reviews in that window, with the number of reviews <code>n</code>. Hover for a ~95 % range.</p>
+    <p><b>Trend</b> (descriptive, sample-limited): average stars per month over the last 12 months, from the loaded reviews only, oldest on the left; months without reviews are skipped. Bigger, darker dots = more reviews that month. Popular places get so many reviews that the loaded ones only cover a few weeks; they are shown per week for the last four weeks instead, because Google switches from “3 weeks ago” to “a month ago” after that (the label says which). The arrow is the change of a line fitted through those averages, weighted by the number of reviews in each period, across the period shown. Less than ±0.2 ★ counts as flat; fewer than 3 periods or 8 reviews shows “too few”.</p>
+    <p><b>Sorting</b>: click any column header; click again to reverse. The default is the Google rating, highest first.</p>
+    <p class="legend">Colour: <span style="background:#15803d"></span>small change · <span style="background:#d97706"></span>≥ 0.15 ★ lower · <span style="background:#b91c1c"></span>≥ 0.5 ★ lower. “lifetime” is compared with Google's ★, “12 mo.” with the visible 12-month average.</p>
+  </section>
+  <section>
+    <h2>Why some values are marked</h2>
+    <p><span class="pill">estimated</span> Google's notice uses ranges (“2 to 5”, “201 to 250”) but the top bucket is open-ended: “<i>more than 250</i>”. There is no upper end, so the tool estimates one (the larger of 500, 5 % of the ratings, or twice the lower end). Values without the tag use Google's own range.</p>
+    <p><b>~</b> before a 12-month value: the tool could not load a full year of reviews (very popular places get hundreds a month), so the number of reviews in the last 12 months is extrapolated from the review rate it did see.</p>
+    <p><i class="partial">Italic</i> window values: the loaded reviews do not reach back that far, so the window only covers part of the period. The row shows how many days back the loaded reviews go.</p>
+    <p>Dates are approximate because Google only shows relative dates (“2 months ago”).</p>
+  </section>
+  <section>
+    <h2>Cache</h2>
+    <p>Reading a place from Google Maps takes time, so results are stored <b>on your computer</b> (<code>cache/places.json</code> next to the app) for <b>24 hours</b>. Searching the same area again shows those places instantly; such rows are marked <span class="tag">cached</span>.</p>
+    <p>Tick <b>refresh</b> to ignore the cache and read every place again. Changing the star assumption never needs a refresh: it is only maths on the stored data. Delete <code>cache/places.json</code> to clear everything.</p>
+  </section>
+  <section>
+    <h2>Read this before drawing conclusions</h2>
+    <p>Counting removed reviews as 1 ★ is the <b>minimum-star scenario</b>; 3 ★ is the <b>midpoint scenario</b>. Neither estimates the real, unknown star values of the removed reviews. Some reviews are removed for good reasons, for example fake reviews or insults.</p>
+    <p>The tool reads business profiles in Germany through the German-language Maps interface, which is where it can find the notice. It only sees the places the bounded Maps search for the area returns and loads, and its page selectors can break when Google changes the page. It is a proof of concept for personal, low-volume use and is not affiliated with Google.</p>
+  </section>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const fmt = (v, d = 1) => v == null ? "–" : v.toLocaleString("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const EST_TIP = "Google only says 'more than 250'. The upper end is our estimate.";
+const N12_TIP = "Not a full year of reviews could be loaded; the yearly count is extrapolated.";
+
+const map = L.map("map").setView([51.2265, 6.7735], 15);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+let regionLayer = null, markers = {}, rows = [], sortKey = "raw", sortDir = -1, es = null;
+
+function deltaClass(d) { return d == null ? "" : d <= -0.5 ? "delta-bad" : d <= -0.15 ? "delta-warn" : "delta-ok"; }
+function color(row) {
+  const m = row.metrics || {}, d = m.calibrated && m.raw != null ? m.calibrated.lo - m.raw : null;
+  if (row.error) return "#9ca3af";
+  if (d == null) return "#2563eb";
+  return d <= -0.5 ? "#b91c1c" : d <= -0.15 ? "#d97706" : "#15803d";
+}
+function rangeCell(c, base) {
+  if (!c) return "–";
+  const d = base != null ? c.lo - base : null;
+  const val = c.lo === c.hi ? fmt(c.lo, 2) : `${fmt(c.lo, 2)}–${fmt(c.hi, 2)}`;
+  const est = c.estimated_upper ? ` <span class="pill" title="${EST_TIP}">estimated</span>` : "";
+  const n12 = c.n12_estimated ? `<span class="small" title="${N12_TIP}">~</span>` : "";
+  return `<span class="${deltaClass(d)}">${n12}${val}</span>${est}`;
+}
+function winCell(w) {
+  if (!w || w.mean == null) return `<span class="muted">${w && w.partial ? "<i>–</i>" : "–"}</span>`;
+  const cls = w.partial ? "partial" : "";
+  const ci = w.ci95 != null ? `, ~95 % range ±${fmt(w.ci95, 1)}` : "";
+  const part = w.partial ? ", window only partly covered" : "";
+  return `<span class="${cls}" title="n=${w.n}${ci}${part}">${fmt(w.mean, 1)}</span> <span class="small">n=${w.n}</span>`;
+}
+function trendCell(m) {
+  const ser = m.series, t = m.trend;
+  if (!ser || !ser.buckets || !ser.buckets.length) return '<span class="muted">–</span>';
+  const W = 96, H = 26, P = 3, b = ser.buckets, n = b.length;
+  const x = i => n === 1 ? W / 2 : P + i * (W - 2 * P) / (n - 1);
+  const y = v => H - P - (v - 1) / 4 * (H - 2 * P);
+  const maxN = Math.max(...b.map(d => d.n), 1);
+  let path = "", dots = "";
+  b.forEach((d, i) => {
+    if (d.mean == null) return;
+    path += (path ? " L" : "M") + x(i).toFixed(1) + "," + y(d.mean).toFixed(1);
+    const r = 1.4 + 2.2 * Math.sqrt(d.n / maxN);
+    const when = d.ago === 0 ? `last ${ser.unit}` : `${d.ago} ${ser.unit}${d.ago > 1 ? "s" : ""} before`;
+    dots += `<circle cx="${x(i).toFixed(1)}" cy="${y(d.mean).toFixed(1)}" r="${r.toFixed(1)}" fill="#2563eb" fill-opacity="${(0.35 + 0.65 * d.n / maxN).toFixed(2)}"><title>${when}: ${fmt(d.mean, 1)} ★ (n=${d.n})</title></circle>`;
+  });
+  const grid = [1, 3, 5].map(v => `<line x1="0" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="#e5e7eb" stroke-width="1"/>`).join("");
+  const svg = `<svg width="${W}" height="${H}" role="img" aria-label="trend">${grid}<path d="${path}" fill="none" stroke="#93c5fd" stroke-width="1.5"/>${dots}</svg>`;
+  if (!t) return svg + ' <span class="small" title="Fewer than 3 periods or 8 reviews">too few</span>';
+  const arrow = { up: "▲", down: "▼", flat: "▶" }[t.direction];
+  const span = `${t.span} ${t.unit}s`;
+  const ch = (t.change > 0 ? "+" : "") + fmt(t.change, 1);
+  return `${svg} <span class="tr-${t.direction}" title="Trend line changes by ${ch} ★ over the last ${span}">${arrow} ${ch}</span> <span class="small">${span}</span>`;
+}
+function headerArrows() {
+  document.querySelectorAll("#t th[data-k]").forEach(th => {
+    th.querySelector(".arrow")?.remove();
+    if (th.dataset.k === sortKey) th.insertAdjacentHTML("beforeend", `<span class="arrow">${sortDir > 0 ? "▲" : "▼"}</span>`);
+  });
+}
+function sortVal(r, k) {
+  const m = r.metrics || {};
+  switch (k) {
+    case "name": return r.name.toLowerCase();
+    case "raw": return m.raw ?? -1;
+    case "count": return m.count ?? -1;
+    case "removed": return m.removed ? m.removed.lo : -1;
+    case "cal": return m.calibrated ? m.calibrated.lo : 99;
+    case "cal12": return m.calibrated_12m ? m.calibrated_12m.lo : 99;
+    case "trend": return m.trend ? m.trend.change : (sortDir > 0 ? 99 : -99);
+    default: { const w = m.recent && m.recent[k.slice(1)]; return w && w.mean != null ? w.mean : -1; }
+  }
+}
+function render() {
+  headerArrows();
+  rows.sort((a, b) => { const x = sortVal(a, sortKey), y = sortVal(b, sortKey); return (x > y ? 1 : x < y ? -1 : 0) * sortDir; });
+  $("#t tbody").innerHTML = rows.map((r, i) => {
+    const m = r.metrics || {};
+    if (r.pending) return `<tr data-i="${i}"><td class="name">${esc(r.name)}</td><td colspan="11" class="muted" style="text-align:left">reading reviews …</td></tr>`;
+    const rem = m.removed
+      ? `${m.removed.lo}${m.removed.hi ? "–" + m.removed.hi : "+"}<div class="small">${fmt(m.removed_share, 0)} %</div>`
+      : '<span class="muted">0</span>';
+    const err = r.error ? `<div class="err">${esc(r.error)}</div>` : "";
+    const cached = r.cached ? ' <span class="tag" title="Read from the local cache (max. 24 h old)">cached</span>' : "";
+    const cov = m.covered_days != null
+      ? `<div class="small">${m.reviews_loaded} reviews loaded, back ${Math.round(m.covered_days)} days${cached}</div>` : "";
+    const base12 = m.recent && m.recent["12"] ? m.recent["12"].mean : null;
+    return `<tr data-i="${i}">
+      <td class="name"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a>${cov}${err}</td>
+      <td>${fmt(m.raw, 2)}</td><td>${(m.count ?? 0).toLocaleString("en-GB")}</td><td>${rem}</td>
+      <td>${rangeCell(m.calibrated, m.raw)}</td><td>${rangeCell(m.calibrated_12m, base12)}</td>
+      ${["1", "2", "3", "6", "12"].map(k => `<td>${winCell(m.recent && m.recent[k])}</td>`).join("")}
+      <td class="trend">${trendCell(m)}</td>
+    </tr>`;
+  }).join("");
+  document.querySelectorAll("#t tbody tr").forEach(tr => tr.onclick = ev => { if (ev.target.tagName !== "A") focusRow(rows[tr.dataset.i]); });
+}
+function focusRow(r) {
+  const mk = markers[r.url]; if (!mk) return;
+  map.setView(mk.getLatLng(), Math.max(map.getZoom(), 17)); mk.openPopup();
+}
+function upsertMarker(r) {
+  if (r.lat == null) return;
+  const m = r.metrics || {};
+  const pop = `<b>${esc(r.name)}</b><br>Google ${fmt(m.raw, 2)} (${m.count ?? "?"} ratings)`
+    + (m.removed ? `<br>removed: ${m.removed.lo}${m.removed.hi ? "–" + m.removed.hi : "+"}<br>lifetime with removed: ${rangeCell(m.calibrated, m.raw)}` : "")
+    + (m.recent && m.recent["3"] && m.recent["3"].mean != null ? `<br>last 3 months: ${fmt(m.recent["3"].mean, 1)} (n=${m.recent["3"].n})` : "");
+  if (markers[r.url]) { markers[r.url].setStyle({ color: color(r), fillColor: color(r) }).setPopupContent(pop); return; }
+  markers[r.url] = L.circleMarker([r.lat, r.lng], { radius: 8, weight: 2, color: color(r), fillColor: color(r), fillOpacity: .7 })
+    .bindPopup(pop).addTo(map);
+}
+
+document.querySelectorAll("#t th[data-k]").forEach(th => th.onclick = () => {
+  const k = th.dataset.k;
+  sortDir = k === sortKey ? -sortDir : (k === "name" || k === "cal" || k === "cal12" ? 1 : -1);
+  sortKey = k; render();
+});
+
+$("#f").onsubmit = ev => {
+  ev.preventDefault();
+  if (es) es.close();
+  const fd = new FormData(ev.target), qs = new URLSearchParams(fd).toString();
+  const catLabel = ev.target.cat.selectedOptions[0].textContent;
+  rows = []; Object.values(markers).forEach(m => m.remove()); markers = {};
+  if (regionLayer) { regionLayer.remove(); regionLayer = null; }
+  render(); $("#go").disabled = true;
+  const status = t => $("#status").textContent = t;
+  status("Looking up the area …");
+  let total = 0, got = 0;
+  es = new EventSource("/api/scan?" + qs);
+  es.addEventListener("region", e => {
+    const r = JSON.parse(e.data);
+    if (r.geojson && r.geojson.type !== "Point") regionLayer = L.geoJSON(r.geojson, { style: { color: "#2563eb", weight: 2, fillOpacity: .06 } }).addTo(map);
+    const [s, w, n, ee] = r.bbox; map.fitBounds([[s, w], [n, ee]], { padding: [20, 20] });
+    status(`Area: ${r.name}. Searching Google Maps for “${catLabel}” …`);
+  });
+  es.addEventListener("places", e => {
+    const d = JSON.parse(e.data); total = d.places.length;
+    rows = d.places.map(p => ({ ...p, pending: true, metrics: {} })); rows.forEach(upsertMarker); render();
+    status(total ? `${total} places inside the area (${d.found} in Google's list). Reading reviews: 0/${total}` : "No places found in this area.");
+    if (!total) { es.close(); $("#go").disabled = false; }
+  });
+  es.addEventListener("place", e => {
+    const r = JSON.parse(e.data); got++;
+    const i = rows.findIndex(x => x.url === r.url);
+    if (i >= 0) rows[i] = r; else rows.push(r);
+    upsertMarker(r); render();
+    status(`Reading reviews: ${got}/${total}`);
+  });
+  es.addEventListener("done", () => { es.close(); $("#go").disabled = false; status(`Done: ${got} places, sorted by Google rating. Click any column header to sort (click again to reverse); click a row to show the place on the map.`); });
+  es.addEventListener("fail", e => { es.close(); $("#go").disabled = false; status("Error: " + JSON.parse(e.data).error); });
+  es.onerror = () => { if (es.readyState === 2) return; es.close(); $("#go").disabled = false; if (got < total) status(`Connection lost after ${got}/${total} places.`); };
+};
+render();
+</script>
+</body>
+</html>
