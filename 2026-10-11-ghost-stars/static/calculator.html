@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghost Stars calculator</title>
+<style>
+  :root { --ink:#1d2330; --mute:#6b7280; --line:#e5e7eb; --good:#15803d; --warn:#b45309; --bad:#b91c1c; --accent:#2563eb; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:16px; font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:#fff; }
+  .card { max-width:760px; margin:0 auto; border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+  h1 { font-size:19px; margin:0 0 2px; }
+  .sub { color:var(--mute); margin:0 0 14px; font-size:13px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:12px; }
+  label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--mute); }
+  input, select, textarea { font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:6px; color:var(--ink); width:100%; }
+  textarea { min-height:70px; font-size:13px; }
+  .full { grid-column: 1 / -1; }
+  .out { margin-top:16px; display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px; }
+  .box { background:#f8fafc; border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+  .box .k { font-size:12px; color:var(--mute); }
+  .box .v { font-size:22px; font-weight:600; }
+  .box .d { font-size:12px; }
+  .bad { color:var(--bad); } .warn { color:var(--warn); } .ok { color:var(--good); }
+  .pill { display:inline-block; padding:0 6px; border-radius:9px; font-size:11px; background:#fde68a; color:#78350f; font-weight:400; vertical-align:middle; }
+  details { margin-top:14px; font-size:13px; color:#374151; }
+  details code { background:#eef; padding:0 3px; border-radius:3px; }
+  .note { font-size:12px; color:var(--mute); margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Ghost Stars calculator</h1>
+  <p class="sub">Open a business profile in Germany on Google Maps, go to the reviews tab, and copy three things from the page. The calculation runs in your browser; the calculator does not transmit the numbers you type.</p>
+
+  <div class="grid">
+    <label>Rating Google shows
+      <input id="rating" type="number" step="0.1" min="1" max="5" value="4.0">
+    </label>
+    <label>Number of ratings Google shows
+      <input id="count" type="number" min="1" value="341">
+    </label>
+    <label>Removed reviews (from the notice)
+      <select id="bucket">
+        <option value="0,0">no notice</option>
+        <option value="1,1">1</option><option value="2,5">2 to 5</option><option value="6,10">6 to 10</option>
+        <option value="11,20">11 to 20</option><option value="21,50">21 to 50</option>
+        <option value="51,100">51 to 100</option><option value="101,150">101 to 150</option>
+        <option value="151,200">151 to 200</option><option value="201,250" selected>201 to 250</option>
+        <option value="251,">more than 250</option>
+      </select>
+    </label>
+    <label>Count a removed review as
+      <select id="assumed">
+        <option value="1" selected>1 ★ (minimum-star scenario)</option><option value="2">2 ★</option><option value="3">3 ★ (midpoint scenario)</option>
+      </select>
+    </label>
+    <label class="full">Optional: paste the notice text instead
+      <textarea id="notice" placeholder="e.g. “201 bis 250 Bewertungen aufgrund von Beschwerden wegen Diffamierung entfernt” or “More than 250 reviews removed due to defamation complaints”"></textarea>
+    </label>
+  </div>
+
+  <div class="out">
+    <div class="box"><div class="k">Google shows</div><div class="v" id="o-raw">–</div><div class="d" id="o-rawd"></div></div>
+    <div class="box"><div class="k">Scenario: removed reviews counted as <span id="o-s">1</span> ★</div><div class="v" id="o-cal">–</div><div class="d" id="o-cald"></div></div>
+    <div class="box"><div class="k">Share of reviews removed</div><div class="v" id="o-share">–</div><div class="d">of visible ratings plus removed reviews (removals processed in the last 365 days)</div></div>
+  </div>
+  <p class="note" id="o-est"></p>
+
+  <details>
+    <summary>How this is calculated</summary>
+    <p>Since April 2026 Google shows a notice on business profiles in Germany when reviews were removed after defamation complaints. It counts removals processed in the last 365 days (the removed reviews may be older) and only gives a range.</p>
+    <p><code>scenario = (rating × ratings + s × removed) / (ratings + removed)</code>, for both ends of the range. <code>s</code> is the star value you choose for a removed review. The result says what the rating would be <i>if</i> the removed reviews had that value. It is not a corrected or recovered rating.</p><p>This assumes the displayed rating is the average of the visible ratings, rounded to one decimal, so the visible star sum is taken as <code>displayed rating × displayed count</code>. The result is shown to one decimal, and the note below gives the range that the rounding alone allows under that assumption.</p>
+    <p>The top bucket “more than 250” has no upper end. The calculator then estimates one (the larger of 500, 5 % of the reviews, or twice the lower end) and marks the result as <span class="pill">estimated</span>.</p>
+    <p>1 ★ is the minimum-star scenario and 3 ★ the midpoint scenario. Neither estimates the real, unknown star values of the removed reviews. Some reviews are removed for good reasons, for example fake reviews or insults.</p>
+    <p>The local Ghost Stars explorer does the same for the places a bounded Maps search returns for an area, using the exact star histogram, and adds ratings for the most recent months. It needs a local browser to read Google Maps, so it cannot run inside a web page.</p>
+  </details>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const f2 = v => v.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const f1 = v => v.toLocaleString("en-GB", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+function parseNotice(t) {
+  t = (t || "").toLowerCase().replace(/\u00a0/g, " ");
+  let m = t.match(/(\d[\d.,]*)\s*(?:bis|to|–|-)\s*(\d[\d.,]*)/);
+  if (m) return [+m[1].replace(/[.,]/g, ""), +m[2].replace(/[.,]/g, "")];
+  m = t.match(/(?:über|mehr als|more than|over)\s*(\d[\d.,]*)/);
+  if (m) return [+m[1].replace(/[.,]/g, "") + 1, null];
+  m = t.match(/(\d[\d.,]*)/);
+  return m ? [+m[1].replace(/[.,]/g, ""), +m[1].replace(/[.,]/g, "")] : null;
+}
+const adj = (r, n, k, s) => (r * n + s * k) / (n + k);
+const cls = d => d <= -0.5 ? "bad" : d <= -0.15 ? "warn" : "ok";
+
+function update() {
+  const r = parseFloat($("rating").value), n = parseInt($("count").value, 10), s = parseFloat($("assumed").value);
+  let range = parseNotice($("notice").value);
+  if (!range) { const [a, b] = $("bucket").value.split(","); range = [+a, b === "" ? null : +b]; }
+  let [lo, hi] = range, est = false;
+  if (!(r >= 1 && r <= 5 && n > 0)) { ["o-raw", "o-cal", "o-share"].forEach(i => $(i).textContent = "–"); return; }
+  $("o-s").textContent = String(s);
+  $("o-raw").textContent = f1(r) + " ★";
+  $("o-rawd").textContent = `${n.toLocaleString("en-GB")} ratings (rating rounded by Google)`;
+  if (!lo) {
+    $("o-cal").textContent = f1(r) + " ★"; $("o-cald").textContent = "no reviews removed"; $("o-cald").className = "d ok";
+    $("o-share").textContent = "0 %"; $("o-est").textContent = ""; return;
+  }
+  if (hi == null) { hi = Math.max(500, Math.round(n * 0.05), lo * 2); est = true; }
+  const a = adj(r, n, hi, s), b = adj(r, n, lo, s);
+  $("o-cal").innerHTML = (f1(a) === f1(b) ? "≈ " + f1(a) : `≈ ${f1(a)}–${f1(b)}`) + " ★" + (est ? ' <span class="pill">estimated</span>' : "");
+  $("o-cald").textContent = f1(b - r) === f1(a - r) ? `about ${f1(b - r)} stars vs. Google` : `${f1(b - r)} to ${f1(a - r)} stars vs. Google`;
+  const aLo = adj(Math.max(1, r - 0.05), n, hi, s), bHi = adj(Math.min(5, r + 0.05), n, lo, s);
+  $("o-cald").className = "d " + cls(b - r);
+  $("o-share").textContent = `${Math.round(lo / (n + lo) * 100)}–${Math.round(hi / (n + hi) * 100)} %`;
+  const rnd = `Google rounds the rating to one decimal (${f1(r)} means ${f2(Math.max(1, r - 0.05))}–${f2(Math.min(5, r + 0.05))}), so, if the rating is a rounded average, this scenario lies between ${f2(aLo)} and ${f2(bHi)}.`;
+  $("o-est").textContent = rnd + (est ? ` Google only says “more than ${lo - 1}”. The upper end (${hi}) is an estimate.` : "");
+}
+["rating", "count", "bucket", "assumed", "notice"].forEach(id => $(id).addEventListener("input", update));
+update();
+</script>
+</body>
+</html>
