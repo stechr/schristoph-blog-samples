@@ -2,6 +2,8 @@
 
 **The ratings Google's deleted reviews leave behind.**
 
+Companion code for the blog post [Ghost Stars: What a 4.0 Means in Germany](https://schristoph.online/blog/ghost-stars/).
+
 Since April 2026, Google Maps shows a notice on business profiles in Germany when reviews were
 removed after defamation complaints, for example *"201 bis 250 Bewertungen aufgrund von
 Beschwerden wegen Diffamierung entfernt"*. The notice gives no counterfactual rating; the profile keeps showing Google's current aggregate.
