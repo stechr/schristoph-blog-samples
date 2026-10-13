@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<rect width="760" height="440" fill="#ffffff"/>
+<line x1="80" y1="380.0" x2="570" y2="380.0" stroke="#e5e5e5"/>
+<text x="72" y="384.0" text-anchor="end" fill="#555">0M</text>
+<line x1="80" y1="331.4" x2="570" y2="331.4" stroke="#e5e5e5"/>
+<text x="72" y="335.4" text-anchor="end" fill="#555">10M</text>
+<line x1="80" y1="282.9" x2="570" y2="282.9" stroke="#e5e5e5"/>
+<text x="72" y="286.9" text-anchor="end" fill="#555">20M</text>
+<line x1="80" y1="234.3" x2="570" y2="234.3" stroke="#e5e5e5"/>
+<text x="72" y="238.3" text-anchor="end" fill="#555">30M</text>
+<line x1="80" y1="185.7" x2="570" y2="185.7" stroke="#e5e5e5"/>
+<text x="72" y="189.7" text-anchor="end" fill="#555">40M</text>
+<line x1="80" y1="137.1" x2="570" y2="137.1" stroke="#e5e5e5"/>
+<text x="72" y="141.1" text-anchor="end" fill="#555">50M</text>
+<line x1="80" y1="88.6" x2="570" y2="88.6" stroke="#e5e5e5"/>
+<text x="72" y="92.6" text-anchor="end" fill="#555">60M</text>
+<line x1="80" y1="40.0" x2="570" y2="40.0" stroke="#e5e5e5"/>
+<text x="72" y="44.0" text-anchor="end" fill="#555">70M</text>
+<text x="80.0" y="400" text-anchor="middle" fill="#555">0%</text>
+<text x="161.7" y="400" text-anchor="middle" fill="#555">10%</text>
+<text x="243.3" y="400" text-anchor="middle" fill="#555">20%</text>
+<text x="325.0" y="400" text-anchor="middle" fill="#555">30%</text>
+<text x="406.7" y="400" text-anchor="middle" fill="#555">40%</text>
+<text x="488.3" y="400" text-anchor="middle" fill="#555">50%</text>
+<text x="570.0" y="400" text-anchor="middle" fill="#555">60%</text>
+<line x1="80" y1="380" x2="570" y2="380" stroke="#333"/>
+<line x1="80" y1="40" x2="80" y2="380" stroke="#333"/>
+<text x="325.0" y="426" text-anchor="middle" fill="#333">Share of decision journeys moved from search to the answer engine</text>
+<text x="18" y="210.0" text-anchor="middle" fill="#333" transform="rotate(-90 18 210.0)">$ per month (toy model)</text>
+<line x1="80" y1="146.9" x2="570" y2="146.9" stroke="#999" stroke-dasharray="2 4"/>
+<text x="566" y="140.9" text-anchor="end" fill="#777" font-size="12">break-even: ad spend at 0% shift</text>
+<polyline points="80.0,146.9 120.8,142.4 161.7,138.0 202.5,133.6 243.3,129.1 284.2,124.7 325.0,120.3 365.8,115.8 406.7,111.4 447.5,107.0 488.3,102.6 529.2,98.1 570.0,93.7" fill="none" stroke="#c8553d" stroke-width="2.5"/>
+<line x1="586" y1="50" x2="614" y2="50" stroke="#c8553d" stroke-width="2.5"/>
+<text x="620" y="54" fill="#333" font-size="12">Total ad spend</text>
+<text x="620" y="68" fill="#777" font-size="11">with uplift</text>
+<polyline points="80.0,146.9 120.8,151.5 161.7,156.2 202.5,160.8 243.3,165.5 284.2,170.2 325.0,174.8 365.8,179.5 406.7,184.2 447.5,188.8 488.3,193.5 529.2,198.1 570.0,202.8" fill="none" stroke="#c8553d" stroke-width="2.5" stroke-dasharray="7 5"/>
+<line x1="586" y1="90" x2="614" y2="90" stroke="#c8553d" stroke-width="2.5" stroke-dasharray="7 5"/>
+<text x="620" y="94" fill="#333" font-size="12">Total ad spend</text>
+<text x="620" y="108" fill="#777" font-size="11">no uplift</text>
+<polyline points="80.0,117.7 120.8,128.8 161.7,139.9 202.5,151.0 243.3,162.1 284.2,173.2 325.0,184.3 365.8,195.4 406.7,206.5 447.5,217.6 488.3,228.7 529.2,239.9 570.0,251.0" fill="none" stroke="#2e6f95" stroke-width="2.5"/>
+<line x1="586" y1="130" x2="614" y2="130" stroke="#2e6f95" stroke-width="2.5"/>
+<text x="620" y="134" fill="#333" font-size="12">Publisher revenue</text>
+<text x="620" y="148" fill="#777" font-size="11">with uplift</text>
+<polyline points="80.0,117.7 120.8,129.1 161.7,140.4 202.5,151.8 243.3,163.2 284.2,174.5 325.0,185.9 365.8,197.3 406.7,208.6 447.5,220.0 488.3,231.4 529.2,242.7 570.0,254.1" fill="none" stroke="#2e6f95" stroke-width="2.5" stroke-dasharray="7 5"/>
+<line x1="586" y1="170" x2="614" y2="170" stroke="#2e6f95" stroke-width="2.5" stroke-dasharray="7 5"/>
+<text x="620" y="174" fill="#333" font-size="12">Publisher revenue</text>
+<text x="620" y="188" fill="#777" font-size="11">no uplift</text>
+</svg>
