@@ -1,0 +1,61 @@
+dataset,seed,model,roc_auc,seconds
+breast-cancer (569x30),0,XGBoost default,0.9854,0.04
+breast-cancer (569x30),0,XGBoost tuned (30x3-fold),0.9871,8.19
+breast-cancer (569x30),0,TabPFN v2 default,0.9954,7.37
+breast-cancer (569x30),1,XGBoost default,0.995,0.03
+breast-cancer (569x30),1,XGBoost tuned (30x3-fold),0.994,8.86
+breast-cancer (569x30),1,TabPFN v2 default,0.9997,5.91
+breast-cancer (569x30),2,XGBoost default,0.9983,0.03
+breast-cancer (569x30),2,XGBoost tuned (30x3-fold),0.997,6.5
+breast-cancer (569x30),2,TabPFN v2 default,0.997,15.6
+breast-cancer (569x30),3,XGBoost default,0.994,0.03
+breast-cancer (569x30),3,XGBoost tuned (30x3-fold),0.995,8.39
+breast-cancer (569x30),3,TabPFN v2 default,0.998,17.97
+breast-cancer (569x30),4,XGBoost default,0.9957,0.12
+breast-cancer (569x30),4,XGBoost tuned (30x3-fold),0.996,7.61
+breast-cancer (569x30),4,TabPFN v2 default,0.9967,9.77
+credit-g (1000x20),0,XGBoost default,0.7577,0.03
+credit-g (1000x20),0,XGBoost tuned (30x3-fold),0.786,6.39
+credit-g (1000x20),0,TabPFN v2 default,0.7914,7.05
+credit-g (1000x20),1,XGBoost default,0.8107,0.03
+credit-g (1000x20),1,XGBoost tuned (30x3-fold),0.8256,6.1
+credit-g (1000x20),1,TabPFN v2 default,0.8583,5.97
+credit-g (1000x20),2,XGBoost default,0.7406,0.04
+credit-g (1000x20),2,XGBoost tuned (30x3-fold),0.7771,5.87
+credit-g (1000x20),2,TabPFN v2 default,0.7985,16.59
+credit-g (1000x20),3,XGBoost default,0.7599,0.03
+credit-g (1000x20),3,XGBoost tuned (30x3-fold),0.7796,4.51
+credit-g (1000x20),3,TabPFN v2 default,0.7798,5.74
+credit-g (1000x20),4,XGBoost default,0.7738,0.03
+credit-g (1000x20),4,XGBoost tuned (30x3-fold),0.8146,5.54
+credit-g (1000x20),4,TabPFN v2 default,0.7955,13.63
+diabetes (768x8),0,XGBoost default,0.8133,0.03
+diabetes (768x8),0,XGBoost tuned (30x3-fold),0.8676,4.28
+diabetes (768x8),0,TabPFN v2 default,0.8665,4.09
+diabetes (768x8),1,XGBoost default,0.7935,0.03
+diabetes (768x8),1,XGBoost tuned (30x3-fold),0.8411,5.77
+diabetes (768x8),1,TabPFN v2 default,0.8433,2.71
+diabetes (768x8),2,XGBoost default,0.8344,0.04
+diabetes (768x8),2,XGBoost tuned (30x3-fold),0.8731,5.46
+diabetes (768x8),2,TabPFN v2 default,0.8841,2.54
+diabetes (768x8),3,XGBoost default,0.7861,0.03
+diabetes (768x8),3,XGBoost tuned (30x3-fold),0.8096,4.01
+diabetes (768x8),3,TabPFN v2 default,0.8259,2.87
+diabetes (768x8),4,XGBoost default,0.8369,0.03
+diabetes (768x8),4,XGBoost tuned (30x3-fold),0.8578,4.99
+diabetes (768x8),4,TabPFN v2 default,0.8685,2.36
+blood-transfusion (748x4),0,XGBoost default,0.6494,0.06
+blood-transfusion (748x4),0,XGBoost tuned (30x3-fold),0.6938,3.71
+blood-transfusion (748x4),0,TabPFN v2 default,0.7126,1.79
+blood-transfusion (748x4),1,XGBoost default,0.7682,0.02
+blood-transfusion (748x4),1,XGBoost tuned (30x3-fold),0.8125,5.09
+blood-transfusion (748x4),1,TabPFN v2 default,0.8416,1.7
+blood-transfusion (748x4),2,XGBoost default,0.6527,0.02
+blood-transfusion (748x4),2,XGBoost tuned (30x3-fold),0.6886,4.74
+blood-transfusion (748x4),2,TabPFN v2 default,0.7143,1.48
+blood-transfusion (748x4),3,XGBoost default,0.7187,0.04
+blood-transfusion (748x4),3,XGBoost tuned (30x3-fold),0.7427,3.47
+blood-transfusion (748x4),3,TabPFN v2 default,0.7673,1.68
+blood-transfusion (748x4),4,XGBoost default,0.6039,0.02
+blood-transfusion (748x4),4,XGBoost tuned (30x3-fold),0.6836,4.18
+blood-transfusion (748x4),4,TabPFN v2 default,0.7077,1.48
