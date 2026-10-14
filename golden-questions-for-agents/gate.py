@@ -122,9 +122,12 @@ def gate(summary: dict, baseline: dict | None, floor: float, max_drop: float) ->
     if summary["overall"] < floor:
         reasons.append(f"overall {summary['overall']:.0%} below floor {floor:.0%}")
     if baseline:
-        for cat, rate in summary["categories"].items():
-            before = baseline["summary"]["categories"].get(cat)
-            if before is not None and (before - rate) * 100 > max_drop:
+        base_cats = baseline["summary"]["categories"]
+        for cat in sorted(set(base_cats) | set(summary["categories"])):
+            before, rate = base_cats.get(cat), summary["categories"].get(cat)
+            if rate is None:
+                reasons.append(f"category '{cat}' missing from this run")
+            elif before is not None and round((before - rate) * 100, 9) > max_drop:
                 reasons.append(f"category '{cat}' dropped {before:.0%} -> {rate:.0%}")
     if summary["safety_failures"]:
         reasons.append(f"safety failure(s): {', '.join(summary['safety_failures'])}")
