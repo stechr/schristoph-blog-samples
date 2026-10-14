@@ -1,0 +1,78 @@
+[
+  {
+    "evaluator": "Builtin.Faithfulness",
+    "with_expected_response": false,
+    "evaluatorId": "Builtin.Faithfulness",
+    "evaluatorName": "Builtin.Faithfulness",
+    "explanation": "The tool output states that the refund policy (effective 2026-04-01) grants a $40 credit for late delivery, with return shipping covered. The assistant's response accurately conveys this: $40 credit for late delivery and return shipping covered. There is no conflicting information; the assistant did not mention the effective date, but omitting it does not create a conflict, just a minor omission. All stated facts align with the tool output.",
+    "context": {
+      "spanContext": {
+        "traceId": "ec399cb1d49ba8b41a8bb6bfe515dc69"
+      }
+    },
+    "value": 1.0,
+    "label": "Completely Yes",
+    "tokenUsage": {
+      "inputTokens": 918,
+      "outputTokens": 112,
+      "totalTokens": 1030
+    }
+  },
+  {
+    "evaluator": "Builtin.Helpfulness",
+    "with_expected_response": false,
+    "evaluatorId": "Builtin.Helpfulness",
+    "evaluatorName": "Builtin.Helpfulness",
+    "explanation": "The user asked how much they are owed for a two-week late delivery. The tool retrieved policy stating a $40 credit for late delivery, with return shipping covered, effective 2026-04-01. The assistant directly answered the user's question using the retrieved policy information, clearly stating the $40 credit and mentioning return shipping coverage. This directly addresses the user's core question and provides actionable information. One minor concern is that the policy is noted as 'effective 2026-04-01' which could be a future date relative to the order, but since we are told tool output takes priority and the assistant isn't expected to reconcile dates not raised by the user, this doesn't detract significantly from helpfulness. The response is concise, relevant, and directly answers the question, moving the user to their goal of understanding compensation. It doesn't go above and beyond by addressing additional concerns like how to claim the credit or timeline, but it fully satisfies the immediate ask.",
+    "context": {
+      "spanContext": {
+        "traceId": "ec399cb1d49ba8b41a8bb6bfe515dc69"
+      }
+    },
+    "value": 0.83,
+    "label": "Very Helpful",
+    "tokenUsage": {
+      "inputTokens": 1064,
+      "outputTokens": 233,
+      "totalTokens": 1297
+    }
+  },
+  {
+    "evaluator": "Builtin.Correctness",
+    "with_expected_response": false,
+    "evaluatorId": "Builtin.Correctness",
+    "evaluatorName": "Builtin.Correctness",
+    "explanation": "The tool result states the refund policy is effective 2026-04-01, which implies it is a future policy and may not currently be in effect. The assistant presents the $40 credit and return shipping coverage as the current, applicable policy without noting the effective date caveat. This could be misleading if the current date is before 2026-04-01, since the policy might not yet apply. However, the core facts stated ($40 credit, return shipping covered) are accurate as per the retrieved policy content itself. The omission of the effective date caveat is a completeness issue rather than a factual error, since the assistant didn't state anything false - it just didn't clarify when the policy applies. Given the instruction that completeness issues should not reduce the score unless they introduce factual inaccuracy, and the assistant's claims directly reflect the tool's stated figures without misstating them, this leans toward correct. However there's a risk that presenting the policy as unconditionally applicable right now could be considered a factual inaccuracy regarding applicability. Weighing both sides, the explicit numbers and coverage match the tool output exactly, so the response is accurate to the retrieved information, though it misses the effective date nuance.",
+    "context": {
+      "spanContext": {
+        "traceId": "ec399cb1d49ba8b41a8bb6bfe515dc69"
+      }
+    },
+    "value": 1.0,
+    "label": "Perfectly Correct",
+    "tokenUsage": {
+      "inputTokens": 942,
+      "outputTokens": 286,
+      "totalTokens": 1228
+    }
+  },
+  {
+    "evaluator": "Builtin.Correctness",
+    "with_expected_response": true,
+    "evaluatorId": "Builtin.Correctness",
+    "evaluatorName": "Builtin.Correctness",
+    "explanation": "The agent response states the customer is owed a $40 credit, while the expected response states the customer is owed a $140 credit. This is a critical factual error - the dollar amount is significantly different ($40 vs $140). Both responses mention that return shipping is covered, which is consistent. However, the core factual answer about the credit amount is wrong, making this response incorrect.",
+    "context": {
+      "spanContext": {
+        "traceId": "ec399cb1d49ba8b41a8bb6bfe515dc69"
+      }
+    },
+    "value": 0.0,
+    "label": "Incorrect",
+    "tokenUsage": {
+      "inputTokens": 537,
+      "outputTokens": 105,
+      "totalTokens": 642
+    }
+  }
+]

@@ -1,0 +1,3 @@
+strands-agents[otel]>=1.60
+boto3>=1.43
+opentelemetry-sdk>=1.40
