@@ -1,0 +1,6 @@
+# Data, baselines and evaluation (CPU is enough)
+pandas>=2.0
+pyarrow>=14
+# Training (GPU only): install Unsloth per https://unsloth.ai/docs/get-started/install
+# unsloth
+# datasets
