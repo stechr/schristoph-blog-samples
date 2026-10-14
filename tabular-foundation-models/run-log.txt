@@ -1,0 +1,76 @@
+breast-cancer (569x30)       seed=0 XGBoost default              AUC=0.9854    0.0s
+breast-cancer (569x30)       seed=0 XGBoost tuned (30x3-fold)    AUC=0.9871    8.2s
+breast-cancer (569x30)       seed=0 TabPFN v2 default            AUC=0.9954    7.4s
+breast-cancer (569x30)       seed=1 XGBoost default              AUC=0.9950    0.0s
+breast-cancer (569x30)       seed=1 XGBoost tuned (30x3-fold)    AUC=0.9940    8.9s
+breast-cancer (569x30)       seed=1 TabPFN v2 default            AUC=0.9997    5.9s
+breast-cancer (569x30)       seed=2 XGBoost default              AUC=0.9983    0.0s
+breast-cancer (569x30)       seed=2 XGBoost tuned (30x3-fold)    AUC=0.9970    6.5s
+breast-cancer (569x30)       seed=2 TabPFN v2 default            AUC=0.9970   15.6s
+breast-cancer (569x30)       seed=3 XGBoost default              AUC=0.9940    0.0s
+breast-cancer (569x30)       seed=3 XGBoost tuned (30x3-fold)    AUC=0.9950    8.4s
+breast-cancer (569x30)       seed=3 TabPFN v2 default            AUC=0.9980   18.0s
+breast-cancer (569x30)       seed=4 XGBoost default              AUC=0.9957    0.1s
+breast-cancer (569x30)       seed=4 XGBoost tuned (30x3-fold)    AUC=0.9960    7.6s
+breast-cancer (569x30)       seed=4 TabPFN v2 default            AUC=0.9967    9.8s
+credit-g (1000x20)           seed=0 XGBoost default              AUC=0.7577    0.0s
+credit-g (1000x20)           seed=0 XGBoost tuned (30x3-fold)    AUC=0.7860    6.4s
+credit-g (1000x20)           seed=0 TabPFN v2 default            AUC=0.7914    7.0s
+credit-g (1000x20)           seed=1 XGBoost default              AUC=0.8107    0.0s
+credit-g (1000x20)           seed=1 XGBoost tuned (30x3-fold)    AUC=0.8256    6.1s
+credit-g (1000x20)           seed=1 TabPFN v2 default            AUC=0.8583    6.0s
+credit-g (1000x20)           seed=2 XGBoost default              AUC=0.7406    0.0s
+credit-g (1000x20)           seed=2 XGBoost tuned (30x3-fold)    AUC=0.7771    5.9s
+credit-g (1000x20)           seed=2 TabPFN v2 default            AUC=0.7985   16.6s
+credit-g (1000x20)           seed=3 XGBoost default              AUC=0.7599    0.0s
+credit-g (1000x20)           seed=3 XGBoost tuned (30x3-fold)    AUC=0.7796    4.5s
+credit-g (1000x20)           seed=3 TabPFN v2 default            AUC=0.7798    5.7s
+credit-g (1000x20)           seed=4 XGBoost default              AUC=0.7738    0.0s
+credit-g (1000x20)           seed=4 XGBoost tuned (30x3-fold)    AUC=0.8146    5.5s
+credit-g (1000x20)           seed=4 TabPFN v2 default            AUC=0.7955   13.6s
+diabetes (768x8)             seed=0 XGBoost default              AUC=0.8133    0.0s
+diabetes (768x8)             seed=0 XGBoost tuned (30x3-fold)    AUC=0.8676    4.3s
+diabetes (768x8)             seed=0 TabPFN v2 default            AUC=0.8665    4.1s
+diabetes (768x8)             seed=1 XGBoost default              AUC=0.7935    0.0s
+diabetes (768x8)             seed=1 XGBoost tuned (30x3-fold)    AUC=0.8411    5.8s
+diabetes (768x8)             seed=1 TabPFN v2 default            AUC=0.8433    2.7s
+diabetes (768x8)             seed=2 XGBoost default              AUC=0.8344    0.0s
+diabetes (768x8)             seed=2 XGBoost tuned (30x3-fold)    AUC=0.8731    5.5s
+diabetes (768x8)             seed=2 TabPFN v2 default            AUC=0.8841    2.5s
+diabetes (768x8)             seed=3 XGBoost default              AUC=0.7861    0.0s
+diabetes (768x8)             seed=3 XGBoost tuned (30x3-fold)    AUC=0.8096    4.0s
+diabetes (768x8)             seed=3 TabPFN v2 default            AUC=0.8259    2.9s
+diabetes (768x8)             seed=4 XGBoost default              AUC=0.8369    0.0s
+diabetes (768x8)             seed=4 XGBoost tuned (30x3-fold)    AUC=0.8578    5.0s
+diabetes (768x8)             seed=4 TabPFN v2 default            AUC=0.8685    2.4s
+blood-transfusion (748x4)    seed=0 XGBoost default              AUC=0.6494    0.1s
+blood-transfusion (748x4)    seed=0 XGBoost tuned (30x3-fold)    AUC=0.6938    3.7s
+blood-transfusion (748x4)    seed=0 TabPFN v2 default            AUC=0.7126    1.8s
+blood-transfusion (748x4)    seed=1 XGBoost default              AUC=0.7682    0.0s
+blood-transfusion (748x4)    seed=1 XGBoost tuned (30x3-fold)    AUC=0.8125    5.1s
+blood-transfusion (748x4)    seed=1 TabPFN v2 default            AUC=0.8416    1.7s
+blood-transfusion (748x4)    seed=2 XGBoost default              AUC=0.6527    0.0s
+blood-transfusion (748x4)    seed=2 XGBoost tuned (30x3-fold)    AUC=0.6886    4.7s
+blood-transfusion (748x4)    seed=2 TabPFN v2 default            AUC=0.7143    1.5s
+blood-transfusion (748x4)    seed=3 XGBoost default              AUC=0.7187    0.0s
+blood-transfusion (748x4)    seed=3 XGBoost tuned (30x3-fold)    AUC=0.7427    3.5s
+blood-transfusion (748x4)    seed=3 TabPFN v2 default            AUC=0.7673    1.7s
+blood-transfusion (748x4)    seed=4 XGBoost default              AUC=0.6039    0.0s
+blood-transfusion (748x4)    seed=4 XGBoost tuned (30x3-fold)    AUC=0.6836    4.2s
+blood-transfusion (748x4)    seed=4 TabPFN v2 default            AUC=0.7077    1.5s
+
+                                                      auc_mean  auc_std  sec_mean
+dataset                   model                                                 
+blood-transfusion (748x4) TabPFN v2 default             0.749    0.057     1.626
+                          XGBoost default               0.679    0.065     0.032
+                          XGBoost tuned (30x3-fold)     0.724    0.055     4.238
+breast-cancer (569x30)    TabPFN v2 default             0.997    0.002    11.324
+                          XGBoost default               0.994    0.005     0.050
+                          XGBoost tuned (30x3-fold)     0.994    0.004     7.910
+credit-g (1000x20)        TabPFN v2 default             0.805    0.031     9.796
+                          XGBoost default               0.769    0.026     0.032
+                          XGBoost tuned (30x3-fold)     0.797    0.022     5.682
+diabetes (768x8)          TabPFN v2 default             0.858    0.023     2.914
+                          XGBoost default               0.813    0.023     0.032
+                          XGBoost tuned (30x3-fold)     0.850    0.026     4.902
+=== EXIT 0
