@@ -1,0 +1,15 @@
+{
+  "answer": "Based on our refund policy, you are owed a $40 credit for your late delivery. We also cover return shipping if you need to return any items.",
+  "spans": [
+    "chat",
+    "execute_tool retrieve_policy",
+    "execute_event_loop_cycle",
+    "chat",
+    "execute_event_loop_cycle",
+    "invoke_agent Strands Agents"
+  ],
+  "error_spans": 0,
+  "wall_clock_s": 2.06,
+  "retrieved_version": "2026-Q2",
+  "current_version": "2026-Q3"
+}
